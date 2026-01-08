@@ -1,0 +1,61 @@
+To create a database in postgreSQl -
+
+CREATE DATABASE mydb;
+
+To delete a database -
+DROP DATABASE mydb;
+
+To connect to database -
+\c mydb
+
+To create a Table
+CREATE TABLE users (
+id SERIAL PRIMARY KEY,
+name VARCHAR(100),
+email VARCHAR(100) UNIQUE,
+age INT
+);
+
+To view all Tables
+\dt
+
+To deleta a Table -
+DROP TABLE users;
+
+To perform CRUD Operation -
+
+Add Data
+INSERT INTO users (name, email, age)
+VALUES ('Aditya', 'aditya@gmail.com', 21);
+
+Read Data -
+SELECT \* FROM users;
+
+update Data -
+UPDATE users
+SET age = 26
+WHERE id = 1;
+
+delete Data -
+UPDATE users
+SET age = 26
+WHERE id = 1;
+
+Primary keys, foreign keys, and basic indexing
+CREATE TABLE orders (
+id SERIAL PRIMARY KEY,
+user_id INT,
+product_name VARCHAR(100),
+CONSTRAINT fk_user
+FOREIGN KEY(user_id)
+REFERENCES users(id)
+);
+
+PostgreSQl Data Types -
+INT - Integer numbers
+SERIAL - Auto-increment integer
+VARCHAR(n) - Text with limit
+TEXT - Unlimited text
+BOOLEAN - true / false
+TIMESTAMP - Date and time
+DATE - Date only
