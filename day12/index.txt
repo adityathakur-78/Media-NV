@@ -1,0 +1,107 @@
+CREATE TABLE users (
+	id_SERIAL PRIMARY KEY,
+	name TEXT,
+	email TEXT,
+	is_active BOOLEAN DEFAULT true,
+	created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE TABLE orders (
+	id_SERIAL PRIMARY KEY,
+	user_id INT REFERENCES users(id),
+	total NUMERIC,
+	created_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO users (name, email) VALUES
+('Aditya', 'aditya@gmail.com'),
+('Rahul', 'rahul@gmail.com'),
+('Amit', 'amit@gmail.com');
+
+INSERT INTO orders (user_id, total) VALUES
+(1, 2000),
+(1, 8000),
+(2, 3000),
+(3, 10000);
+
+WITH high_value_orders AS (
+	SELECT * FROM orders WHERE total > 5000
+)
+SELECT * FROM high_value_orders;
+
+SELECT name
+FROM users
+WHERE id IN (
+	SELECT user_id FROM orders WHERE total > 5000
+);
+
+SELECT name
+FROM users
+WHERE id IN (
+	SELECT user_id FROM orders WHERE total > 5000
+);
+
+EXPLAIN ANALYZE
+SELECT * FROM users WHERE email = 'aditya@gmail.com'
+
+CREATE INDEX idx_users_email ON users(email);
+
+EXPLAIN ANALYZE
+SELECT * FROM users WHERE email = 'aditya@gmail.com'
+
+BEGIN;
+
+INSERT INTO orders (user_id, total) values (1,5000);
+
+ROLLBACK;
+
+SELECT * FROM orders;
+
+
+BEGIN;
+
+INSERT INTO orders (user_id, total) VALUES (1, 5000);
+
+COMMIT;
+
+
+
+CREATE OR REPLACE FUNCTION  calculate_discount(amount NUMERIC)
+RETURNS NUMERIC AS $$
+BEGIN 
+	IF amount> 5000 THEN
+		RETURN amount * 0.9;
+	END IF;
+		RETURN amount;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT calculate_discount(1000)
+
+-- TRIGGER __
+
+CREATE TABLE user_audit (
+	id SERIAL PRIMARY KEY,
+	user_id INT,
+	action TEXT,
+	action_time TIMESTAMP DEFAULT NOW()
+);
+
+CREATE OR REPLACE FUNCTION audit_user_changes()
+RETURNS TRIGGER AS $$
+BEGIN 
+	INSERT INTO user_audit(user_id, action)
+	VALUES (NEW.id, TG_OP);
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql
+
+CREATE TRIGGER user_audit_trigger
+AFTER INSERT OR UPDATE
+ON users
+FOR EACH ROW
+EXECUTE FUNCTION audit_user_changes();
+
+
+UPDATE users SET name = 'Aditya Updated' WHERE id = 1;
+
+SELECT * FROM user_audit;
