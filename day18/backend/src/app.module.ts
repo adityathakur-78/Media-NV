@@ -8,6 +8,9 @@ import { StudentModule } from './api/student/student.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminModule } from './api/admin/admin.module';
+import { ClassesModule } from './api/classes/classes.module';
+import { MarksModule } from './api/marks/marks.module';
+import { SubjectModule } from './api/subject/subject.module';
 
 @Module({
   imports: [
@@ -35,6 +38,9 @@ import { AdminModule } from './api/admin/admin.module';
     TeacherModule,
     StudentModule,
     AdminModule,
+    ClassesModule,
+    MarksModule,
+    SubjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],

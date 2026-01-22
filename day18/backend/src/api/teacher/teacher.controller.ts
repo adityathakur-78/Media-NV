@@ -60,4 +60,9 @@ export class TeacherController {
     const user = await this.userService.createUser(req.user, dto);
     return new apiResponse(true, 'New Student created Successfully', user);
   }
+
+  //   @Post('marks')
+  // giveMarks()
+
+  // @Get('my-classes')
 }
