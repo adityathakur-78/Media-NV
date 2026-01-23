@@ -8,11 +8,6 @@ import {
   Bar,
   AreaChart,
   Area,
-  RadarChart,
-  Radar,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
   XAxis,
   YAxis,
   Tooltip,
@@ -29,11 +24,45 @@ function StatCard({ title, value, color }) {
   );
 }
 
+// Build monthly growth from real createdAt
+function buildMonthlyGrowth(users) {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const map = {};
+
+  users.forEach((u) => {
+    if (!u.createdAt) return;
+    const d = new Date(u.createdAt);
+    const key = months[d.getMonth()];
+
+    if (!map[key]) map[key] = { month: key, students: 0, teachers: 0 };
+
+    if (u.role === "STUDENT") map[key].students++;
+    if (u.role === "TEACHER") map[key].teachers++;
+  });
+
+  return Object.values(map);
+}
+
 export default function AdminOverview() {
   const [students, setStudents] = useState(0);
   const [teachers, setTeachers] = useState(0);
   const [users, setUsers] = useState(0);
   const [recentUsers, setRecentUsers] = useState([]);
+  const [monthlyGrowth, setMonthlyGrowth] = useState([]);
+  const [activeTrend, setActiveTrend] = useState([]);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -42,46 +71,32 @@ export default function AdminOverview() {
       const tch = await api.get("/admin/all-teachers");
 
       const allUsers = all.data.data;
+
       setUsers(allUsers.length);
       setStudents(std.data.data.length);
       setTeachers(tch.data.data.length);
 
+      // Monthly growth
+      setMonthlyGrowth(buildMonthlyGrowth(allUsers));
+
+      // Active vs Inactive
+      setActiveTrend([
+        { label: "Active", count: allUsers.filter((u) => u.isActive).length },
+        {
+          label: "Inactive",
+          count: allUsers.filter((u) => !u.isActive).length,
+        },
+      ]);
+
+      // Recent users
       const sorted = [...allUsers].sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
       );
       setRecentUsers(sorted.slice(0, 5));
     };
+
     loadStats();
   }, []);
-
-  const multiGrowth = [
-    { month: "Jan", students: 20, teachers: 5 },
-    { month: "Feb", students: 40, teachers: 12 },
-    { month: "Mar", students: 70, teachers: 18 },
-    { month: "Apr", students: 120, teachers: 25 },
-    { month: "May", students, teachers },
-  ];
-
-  const areaData = [
-    { day: "Mon", active: Math.floor(users * 0.4) },
-    { day: "Tue", active: Math.floor(users * 0.5) },
-    { day: "Wed", active: Math.floor(users * 0.6) },
-    { day: "Thu", active: Math.floor(users * 0.7) },
-    { day: "Fri", active: Math.floor(users * 0.9) },
-  ];
-
-  const radarData = [
-    { metric: "Logins", score: 120 },
-    { metric: "Updates", score: 98 },
-    { metric: "Creations", score: 86 },
-    { metric: "Deletions", score: 30 },
-    { metric: "Security", score: 100 },
-  ];
-
-  const hourlyData = Array.from({ length: 24 }).map((_, i) => ({
-    hour: `${i}:00`,
-    hits: Math.floor(Math.random() * 100) + 20,
-  }));
 
   return (
     <div className="space-y-6">
@@ -97,14 +112,18 @@ export default function AdminOverview() {
           value={users - (students + teachers)}
           color="text-yellow-400"
         />
-        <StatCard title="Active Users" value={users} color="text-emerald-400" />
+        <StatCard
+          title="Active Users"
+          value={activeTrend.find((x) => x.label === "Active")?.count || 0}
+          color="text-emerald-400"
+        />
         <StatCard title="System" value="Secure" color="text-cyan-400" />
       </div>
 
-      {/* CHARTS GRID */}
+      {/* CHARTS */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <ChartBox title="Students vs Teachers Growth">
-          <LineChart data={multiGrowth}>
+        <ChartBox title="Students vs Teachers Monthly Growth">
+          <LineChart data={monthlyGrowth}>
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip />
@@ -114,8 +133,8 @@ export default function AdminOverview() {
           </LineChart>
         </ChartBox>
 
-        <ChartBox title="Monthly Registration by Role">
-          <BarChart data={multiGrowth}>
+        <ChartBox title="Monthly Registrations by Role">
+          <BarChart data={monthlyGrowth}>
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip />
@@ -125,40 +144,16 @@ export default function AdminOverview() {
           </BarChart>
         </ChartBox>
 
-        <ChartBox title="Active Users Trend">
-          <AreaChart data={areaData}>
-            <XAxis dataKey="day" />
+        <ChartBox title="Active vs Inactive Users">
+          <AreaChart
+            data={activeTrend.map((x) => ({ name: x.label, value: x.count }))}
+          >
+            <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
-            <Area dataKey="active" stroke="#22C55E" fill="#22C55E" />
+            <Area dataKey="value" stroke="#22C55E" fill="#22C55E" />
           </AreaChart>
         </ChartBox>
-
-        <ChartBox title="Engagement Radar">
-          <RadarChart data={radarData}>
-            <PolarGrid />
-            <PolarAngleAxis dataKey="metric" />
-            <PolarRadiusAxis />
-            <Radar
-              dataKey="score"
-              stroke="#FACC15"
-              fill="#FACC15"
-              fillOpacity={0.6}
-            />
-          </RadarChart>
-        </ChartBox>
-
-        <div className="bg-white/5 border border-white/10 rounded-xl p-4 xl:col-span-2">
-          <h3 className="mb-3 font-semibold">Hourly System Activity</h3>
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={hourlyData}>
-              <XAxis dataKey="hour" />
-              <YAxis />
-              <Tooltip />
-              <Line dataKey="hits" stroke="#06B6D4" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
       </div>
 
       {/* BOTTOM GRID */}
@@ -179,7 +174,13 @@ export default function AdminOverview() {
                 <tr key={u.id} className="border-t border-white/10">
                   <td className="p-2">{u.fullname}</td>
                   <td
-                    className={`p-2 font-semibold ${u.role === "ADMIN" ? "text-yellow-400" : u.role === "TEACHER" ? "text-purple-400" : "text-blue-400"}`}
+                    className={`p-2 font-semibold ${
+                      u.role === "ADMIN"
+                        ? "text-yellow-400"
+                        : u.role === "TEACHER"
+                          ? "text-purple-400"
+                          : "text-blue-400"
+                    }`}
                   >
                     {u.role}
                   </td>

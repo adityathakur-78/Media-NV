@@ -20,7 +20,12 @@ const menu = [
   { name: "Teachers", icon: GraduationCap, path: "/admin/teachers" },
   { name: "Create User", icon: UserPlus, path: "/admin/create-user" },
   { name: "Analytics", icon: BarChart3, path: "/admin/analytics" },
-  { name: "Roles & Permissions", icon: Shield, path: "/admin/roles" },
+  {
+    name: "Roles & Permissions",
+    icon: Shield,
+    path: "/admin/roles",
+  },
+  { name: "Academics", icon: Shield, path: "/admin/academics" },
   //   { name: "Settings", icon: Settings, path: "/admin/settings" },
   { name: "All Users", icon: User2Icon, path: "/admin/all-users" },
 ];

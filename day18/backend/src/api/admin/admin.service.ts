@@ -99,4 +99,60 @@ export class AdminService {
 
     return this.teacherProfileRepo.save(profile);
   }
+
+  async getAllClasses() {
+    return this.classRepo.find();
+  }
+
+  async getClassById(id: string) {
+    const cls = await this.classRepo.findOne({
+      where: { id },
+    });
+    if (!cls) throw new NotFoundException('Class not found');
+    return cls;
+  }
+
+  async getAllSubjects() {
+    return this.subjectRepo.find();
+  }
+
+  async getSubjectById(id: string) {
+    const subject = await this.subjectRepo.findOne({
+      where: { id },
+    });
+    if (!subject) throw new NotFoundException('Subject not found');
+    return subject;
+  }
+
+  async updateClass(id: string, dto: CreateClassDto) {
+    const classEntity = await this.classRepo.findOneBy({ id });
+    if (!classEntity) throw new NotFoundException('Class not found');
+
+    Object.assign(classEntity, dto);
+    return this.classRepo.save(classEntity);
+  }
+
+  async deleteClass(id: string) {
+    const classEntity = await this.classRepo.findOneBy({ id });
+    if (!classEntity) throw new NotFoundException('Class not found');
+
+    await this.classRepo.remove(classEntity);
+    return { success: true, message: 'Class deleted successfully' };
+  }
+
+  async updateSubject(id: string, dto: CreateSubjectDto) {
+    const subject = await this.subjectRepo.findOneBy({ id });
+    if (!subject) throw new NotFoundException('Subject not found');
+
+    Object.assign(subject, dto);
+    return this.subjectRepo.save(subject);
+  }
+
+  async deleteSubject(id: string) {
+    const subject = await this.subjectRepo.findOneBy({ id });
+    if (!subject) throw new NotFoundException('Subject not found');
+
+    await this.subjectRepo.remove(subject);
+    return { success: true, message: 'Subject deleted successfully' };
+  }
 }

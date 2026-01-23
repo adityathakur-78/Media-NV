@@ -17,7 +17,7 @@ export class StudentService {
   async getMyReportCard(userId: string) {
     const studentProfile = await this.studentProfileRepo.findOne({
       where: { user: { id: userId } },
-      relations: ['class'],
+      relations: ['class', 'user'],
     });
 
     if (!studentProfile) {
@@ -30,6 +30,7 @@ export class StudentService {
     });
 
     return {
+      studentName: studentProfile.user.fullname,
       className: studentProfile.class.name,
       rollNo: studentProfile.rollNo,
       subjects: marks.map((m) => ({

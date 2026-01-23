@@ -3,32 +3,70 @@ import { useState } from "react";
 import api from "@/lib/axios";
 
 export default function EditStudentModal({ student, onClose, onUpdated }) {
-  const [fullname, setFullname] = useState(student.fullname);
-  const [email, setEmail] = useState(student.email);
+  const [form, setForm] = useState({
+    fullname: student.fullname || "",
+    gender: student.gender || "",
+    phone: student.phone || "",
+    address: student.address || "",
+    about: student.about || "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const update = async () => {
-    await api.patch(`/admin/student/update/${student.id}`, {
-      fullname,
-    });
+    await api.patch(`/admin/student/update/${student.id}`, form);
     onUpdated();
     onClose();
   };
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
-      <div className="bg-[#0F1525] p-6 rounded-xl w-96">
+      <div className="bg-[#0F1525] p-6 rounded-xl w-112.5">
         <h2 className="text-lg font-bold mb-4">Edit Student</h2>
 
         <input
+          name="fullname"
+          value={form.fullname}
+          onChange={handleChange}
+          placeholder="Full Name"
           className="w-full mb-3 p-2 bg-black/40 border border-white/10 rounded"
-          value={fullname}
-          onChange={(e) => setFullname(e.target.value)}
+        />
+
+        <select
+          name="gender"
+          value={form.gender}
+          onChange={handleChange}
+          className="w-full mb-3 p-2 bg-black/40 border border-white/10 rounded"
+        >
+          <option value="">Select Gender</option>
+          <option value="MALE">MALE</option>
+          <option value="FEMALE">FEMALE</option>
+        </select>
+
+        <input
+          name="phone"
+          value={form.phone}
+          onChange={handleChange}
+          placeholder="Phone"
+          className="w-full mb-3 p-2 bg-black/40 border border-white/10 rounded"
+        />
+
+        <textarea
+          name="about"
+          value={form.about}
+          onChange={handleChange}
+          placeholder="About"
+          className="w-full mb-3 p-2 bg-black/40 border border-white/10 rounded"
         />
 
         <input
+          name="address"
+          value={form.address}
+          onChange={handleChange}
+          placeholder="Address"
           className="w-full mb-4 p-2 bg-black/40 border border-white/10 rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
         />
 
         <div className="flex justify-end gap-2">

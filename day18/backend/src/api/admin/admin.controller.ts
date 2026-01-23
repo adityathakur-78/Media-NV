@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -140,5 +141,45 @@ export class AdminController {
       'Teacher is assigned Succesfully',
       assignteacher,
     );
+  }
+
+  @Get('classes')
+  getAllClasses() {
+    return this.adminService.getAllClasses();
+  }
+
+  @Get('classes/:id')
+  getClass(@Param('id') id: string) {
+    return this.adminService.getClassById(id);
+  }
+
+  @Get('subjects')
+  getAllSubjects() {
+    return this.adminService.getAllSubjects();
+  }
+
+  @Get('subjects/:id')
+  getSubject(@Param('id') id: string) {
+    return this.adminService.getSubjectById(id);
+  }
+
+  @Patch('classes/:id')
+  updateClass(@Param('id') id: string, @Body() dto: CreateClassDto) {
+    return this.adminService.updateClass(id, dto);
+  }
+
+  @Delete('classes/:id')
+  deleteClass(@Param('id') id: string) {
+    return this.adminService.deleteClass(id);
+  }
+
+  @Patch('subjects/:id')
+  updateSubject(@Param('id') id: string, @Body() dto: CreateSubjectDto) {
+    return this.adminService.updateSubject(id, dto);
+  }
+
+  @Delete('subjects/:id')
+  deleteSubject(@Param('id') id: string) {
+    return this.adminService.deleteSubject(id);
   }
 }

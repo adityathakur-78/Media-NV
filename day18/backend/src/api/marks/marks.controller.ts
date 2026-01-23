@@ -7,6 +7,7 @@ import { Role } from 'src/common/enums/roles.enum';
 import { MarksService } from './marks.service';
 import { CreateMarkDto } from './dto/create-mark.dto';
 import { UpdateMarkDto } from './dto/update-mark-dto';
+import { apiResponse } from 'src/common/response/api-response';
 
 @Roles(Role.TEACHER)
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -15,22 +16,30 @@ export class MarksController {
   constructor(private readonly marksService: MarksService) {}
 
   @Post()
-  giveMarks(@Req() req, @Body() dto: CreateMarkDto) {
-    return this.marksService.giveMarks(req.user.userId, dto);
+  async giveMarks(@Req() req, @Body() dto: CreateMarkDto) {
+    const marks = await this.marksService.giveMarks(req.user.userId, dto);
+    return new apiResponse(true, 'Marks added successfully', marks);
   }
 
   @Patch(':id')
-  updateMarks(@Param('id') id: string, @Body() dto: UpdateMarkDto) {
-    return this.marksService.updateMarks(id, dto);
+  async updateMarks(@Param('id') id: string, @Body() dto: UpdateMarkDto) {
+    const marks = await this.marksService.updateMarks(id, dto);
+    return new apiResponse(true, 'Marks updated  successfully', marks);
   }
 
   @Get('my-classes')
-  getMyClasses(@Req() req) {
-    return this.marksService.getMyClasses(req.user.userId);
+  async getMyClasses(@Req() req) {
+    const marks = await this.marksService.getMyClasses(req.user.userId);
+    return new apiResponse(true, 'class data fetched successfully', marks);
   }
 
   @Get('class/:classId/students')
-  getStudents(@Param('classId') classId: string) {
-    return this.marksService.getStudentsByClass(classId);
+  async getStudents(@Param('classId') classId: string) {
+    const marks = await this.marksService.getStudentsByClass(classId);
+    return new apiResponse(
+      true,
+      ' student data fetched from class successfully',
+      marks,
+    );
   }
 }
