@@ -10,7 +10,6 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_60%)]" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
 
-        {/* Navbar spacer */}
         <Navbar />
 
         {/* Hero Section */}
@@ -46,6 +45,44 @@ export default function AboutPage() {
               To become the operating system of education by connecting
               students, teachers, and administrators on a single smart platform.
             </p>
+          </div>
+        </section>
+
+        {/* Core Values */}
+        <section className="relative z-10 max-w-7xl mx-auto px-6 mt-20">
+          <h2 className="text-3xl font-bold text-center mb-10">
+            Our <span className="text-indigo-300">Core Values</span>
+          </h2>
+
+          <div className="grid md:grid-cols-4 gap-6">
+            {[
+              {
+                title: "Security First",
+                desc: "Every feature is built with privacy and data protection at its core.",
+              },
+              {
+                title: "Student Centric",
+                desc: "Designed to enhance learning, not complicate it.",
+              },
+              {
+                title: "Innovation",
+                desc: "We continuously evolve with AI and modern cloud technologies.",
+              },
+              {
+                title: "Reliability",
+                desc: "High availability systems trusted by institutions every day.",
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 text-center hover:scale-105 transition-transform"
+              >
+                <h4 className="text-indigo-300 font-semibold mb-2">
+                  {item.title}
+                </h4>
+                <p className="text-gray-400 text-sm">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </section>
 
