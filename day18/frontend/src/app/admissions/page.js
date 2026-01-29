@@ -6,12 +6,12 @@ export default function AdmissionsPage() {
   return (
     <div className="min-h-screen bg-[#0b0f19] text-white relative overflow-hidden">
       <Navbar />
+
       {/* Background lighting */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_60%)]" />
-      <div className="absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-black/80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-24">
-        {/* Title */}
         <h1 className="text-5xl font-bold text-center mb-4">
           Admissions at <span className="text-indigo-300">SmartSchool</span>
         </h1>
@@ -20,7 +20,6 @@ export default function AdmissionsPage() {
           fee structure, and apply online with ease.
         </p>
 
-        {/* Admission Process */}
         <section className="mb-20">
           <h2 className="text-3xl font-bold mb-8 text-center">
             Admission <span className="text-indigo-300">Process</span>
@@ -63,7 +62,6 @@ export default function AdmissionsPage() {
           </div>
         </section>
 
-        {/* Fee Structure */}
         <section className="mb-20">
           <h2 className="text-3xl font-bold mb-8 text-center">
             Fee <span className="text-indigo-300">Structure</span>
@@ -118,7 +116,6 @@ export default function AdmissionsPage() {
           </div>
         </section>
 
-        {/* Apply Online */}
         <section>
           <h2 className="text-3xl font-bold mb-8 text-center">
             Apply <span className="text-indigo-300">Online</span>
