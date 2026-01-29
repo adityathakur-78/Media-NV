@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Navbar from "@/components/navbar";
 
 const images = [
@@ -30,50 +31,56 @@ const images = [
   },
 ];
 
+const categories = [
+  "All",
+  "Campus",
+  "Library",
+  "Classroom",
+  "Laboratory",
+  "Students",
+  "Graduation",
+];
+
 export default function GalleryPage() {
   const [selected, setSelected] = useState("All");
   const [preview, setPreview] = useState(null);
 
   const filtered =
-    selected === "All" ? images : images.filter((i) => i.category === selected);
+    selected === "All"
+      ? images
+      : images.filter((img) => img.category === selected);
 
   return (
     <div className="min-h-screen bg-[#0b0f19] text-white relative overflow-hidden">
       <Navbar />
 
-      {/* Background Lighting */}
+      {/* Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_60%)]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-black/80" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-24">
         {/* Title */}
         <h1 className="text-5xl font-bold text-center mb-4">
           SmartSchool <span className="text-indigo-300">Gallery</span>
         </h1>
-        <p className="text-gray-400 text-center max-w-3xl mx-auto mb-8">
+
+        <p className="text-gray-400 text-center max-w-3xl mx-auto mb-10">
           Explore our campus, classrooms, laboratories, events, and student
           life.
         </p>
 
         {/* Filters */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {[
-            "All",
-            "Campus",
-            "Library",
-            "Classroom",
-            "Laboratory",
-            "Students",
-            "Graduation",
-          ].map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelected(cat)}
-              className={`px-4 py-2 rounded-full text-sm border backdrop-blur transition ${
-                selected === cat
-                  ? "bg-indigo-500/20 border-indigo-400 text-indigo-300"
-                  : "bg-white/5 border-white/10 hover:bg-white/10"
-              }`}
+              className={`px-4 py-2 rounded-full text-sm border backdrop-blur transition
+                ${
+                  selected === cat
+                    ? "bg-indigo-500/20 border-indigo-400 text-indigo-300"
+                    : "bg-white/5 border-white/10 hover:bg-white/10"
+                }`}
             >
               {cat}
             </button>
@@ -82,19 +89,20 @@ export default function GalleryPage() {
 
         {/* Image Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filtered.map((img, i) => (
+          {filtered.map((img) => (
             <div
-              key={i}
+              key={img.src}
               onClick={() => setPreview(img.src)}
               className="cursor-pointer relative group rounded-xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl"
             >
-              <img
+              <Image
                 src={img.src}
-                alt="SmartSchool Gallery"
-                className="object-cover w-full h-64 group-hover:scale-110 transition-transform duration-500"
+                alt={img.category}
+                width={600}
+                height={400}
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
               />
 
-              {/* Hover Overlay */}
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                 <span className="text-sm text-gray-200">View</span>
               </div>
@@ -106,13 +114,18 @@ export default function GalleryPage() {
       {/* Lightbox Modal */}
       {preview && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur z-50 flex items-center justify-center"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur flex items-center justify-center"
           onClick={() => setPreview(null)}
         >
-          <img
-            src={preview}
-            className="max-h-[90vh] max-w-[90vw] rounded-xl border border-white/20"
-          />
+          <div onClick={(e) => e.stopPropagation()}>
+            <Image
+              src={preview}
+              alt="Preview"
+              width={1200}
+              height={800}
+              className="max-w-[90vw] max-h-[90vh] rounded-xl border border-white/20"
+            />
+          </div>
         </div>
       )}
     </div>
